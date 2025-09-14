@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Dragon Cursor</title>
+  <style>
+    html, body {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: rgb(60, 97, 153);
+      touch-action: none;
+    }
+
+    svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #c9c9c9;
+      cursor: pointer;
+      filter: sepia(20%);
+    }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+      <linearGradient id="LinearGradID_3" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0" style="stop-color:#C11100; stop-opacity:1" />
+        <stop offset="1" style="stop-color:#CAA133; stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <g id="screen"></g>
+  </svg>
+
+  <script>
+    "use strict";
+
+    const screen = document.getElementById("screen");
+    const xmlns = "http://www.w3.org/2000/svg";
+    const xlinkns = "http://www.w3.org/1999/xlink";
+
+    let pointer = { x: 0, y: 0 };
+    let rad = 0;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+    });
+
+    window.addEventListener("pointermove", (e) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      rad = 0;
+    });
+
+    function createDragonPath(x, y) {
+      const path = document.createElementNS(xmlns, "path");
+      path.setAttribute("style", "fill: url(#LinearGradID_3)");
+      path.setAttribute("d",
+        `M${x + 18.8},${y}Q${x + 18} ${y + 1.45} ${x + 7.75} ${y + 4.1}Q${x + 2.7} ${y + 2.4} ${x} ${y + 5.95}Q${x + 0.05} ${y + 12.55} ${x + 6.65} ${y + 12.4}Q${x + 1.25} ${y + 16.25} ${x - 6.2} ${y + 8.35}Q${x - 6.35} ${y + 8.25} ${x - 6.45} ${y + 8.25}L${x - 6.5} ${y + 8.25}Q${x - 11.2} ${y + 5.35} ${x - 12.3} ${y + 9.6}Q${x - 17.85} ${y + 5.7} ${x - 18.8} ${y}L${x + 18.8} ${y}`
+      );
+      return path;
+    }
+
+    function animate() {
+      rad += 0.1;
+      const x = pointer.x + Math.cos(rad) * 30;
+      const y = pointer.y + Math.sin(rad) * 30;
+
+      const dragon = createDragonPath(x, y);
+      screen.appendChild(dragon);
+
+      if (screen.childNodes.length > 100) {
+        screen.removeChild(screen.firstChild);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
